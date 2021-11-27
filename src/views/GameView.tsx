@@ -5,12 +5,18 @@ import Flex from "../components/Flex";
 import GameCard from "../components/GameCard";
 import Spacing from "../components/Spacing";
 import PlayModal, { playProps } from "../modals/PlayModal";
+import ViewPlaysModal from "../modals/ViewPlaysModal";
 
 // interface Props {}
 
 export default function GameView(): ReactElement {
   const [playModal, setPlayModal] = React.useState<boolean>(false);
   const [play, setPlay] = React.useState<playProps>("rock");
+
+  const [viewPlayModal, setViewPlayModal] = React.useState<boolean>(false);
+  const [play1, setPlay1] = React.useState<playProps>("rock");
+  const [play2, setPlay2] = React.useState<playProps>("rock");
+
   const playArr: playProps[] = ["scissors", "rock", "paper"];
   return (
     <>
@@ -19,7 +25,17 @@ export default function GameView(): ReactElement {
         <GameCard id="2836363-567343525" status="created" staked={4352} created="7th November 2021" player1="melvinmanni.testnet" player2="bot" winner="Pending...">
           <Spacing marginTop="39px" marginBottom="15px">
             <Flex justifyContent="space-between" flex={0.3}>
-              <RegularButton disabled>View Plays</RegularButton>
+              <RegularButton
+                onClick={() => {
+                  const randomPlay1: playProps = playArr[Math.floor(Math.random() * 3)];
+                  const randomPlay2: playProps = playArr[Math.floor(Math.random() * 3)];
+                  setPlay1(randomPlay1);
+                  setPlay2(randomPlay2);
+                  setViewPlayModal(true);
+                }}
+              >
+                View Plays
+              </RegularButton>
               <RegularButton
                 onClick={() => {
                   const randomPlay: playProps = playArr[Math.floor(Math.random() * 3)];
@@ -34,6 +50,7 @@ export default function GameView(): ReactElement {
         </GameCard>
       </Flex>
       <PlayModal play={play} open={playModal} handleClose={() => setPlayModal(false)} />
+      <ViewPlaysModal open={viewPlayModal} play1={play1} play2={play2} handleClose={() => setViewPlayModal(false)} player1="melvinmanni09.testnet" player2="bot" />
     </>
   );
 }

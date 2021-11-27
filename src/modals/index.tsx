@@ -51,7 +51,7 @@ const CloseWrapper = styled.button`
   cursor: pointer;
 `;
 
-export default function ModalComponent({ open, handleClose }: Props): ReactElement {
+export default function ModalComponent({ children, open, handleClose }: Props): ReactElement {
   const [closeModal, setCloseModal] = React.useState<boolean>(true);
 
   React.useEffect(() => {
@@ -79,7 +79,7 @@ export default function ModalComponent({ open, handleClose }: Props): ReactEleme
               <CloseWrapper>
                 <CloseCircleIcon onClick={handleClose} />
               </CloseWrapper>
-              <></>
+              <>{children}</>
             </Card>
           </Flex>
         </Wrapper>

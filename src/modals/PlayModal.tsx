@@ -11,13 +11,13 @@ interface Props {
   handleClose: VoidFunction;
 }
 
-const PlayWrapper = styled.div`
+export const PlayWrapper = styled.div`
   background: #242b42;
   box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.25);
   border-radius: 6px;
   padding: 30px;
+  width: max-content;
 `;
-
 
 export default function PlayModal({ play, open, handleClose }: Props): ReactElement {
   return (
