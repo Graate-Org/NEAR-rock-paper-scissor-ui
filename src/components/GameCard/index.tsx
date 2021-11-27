@@ -16,8 +16,11 @@ interface Props {
   children?: React.ReactNode;
 }
 
+export type gameProps = Props;
+
 const Wrapper = styled.div`
-  background: #2e3650;
+  background-color: #2e3650;
+  background-image: url("./game-bg.svg");
   border-radius: 5px;
   position: relative;
   padding: 26px 20px 46px 20px;
@@ -60,32 +63,32 @@ export default function GameCard({ created, status, staked, id, route, player1, 
             Amount Staked: {staked} NEAR
           </CardText>
 
-          <CardText mb="17px" fontSize={14}>
+          <CardText mb="2px" fontSize={14}>
             Created: {created}
           </CardText>
 
           {player1 && (
-            <CardText mb="17px" fontSize={14}>
+            <CardText mb="2px" fontSize={14}>
               Player1: {player1}
             </CardText>
           )}
 
           {player2 && (
-            <CardText mb="17px" fontSize={14}>
+            <CardText mb="2px" fontSize={14}>
               Player2: {player2}
             </CardText>
           )}
 
           {winner && (
-            <CardText mb="17px" fontSize={14}>
+            <CardText mb="2px" fontSize={14}>
               Winner: {winner}
             </CardText>
           )}
 
-          {children && <div style={{ width: "100%" }}>{children}</div>}
+          {children && <div style={{ width: "100%", margin: "10px" }}>{children}</div>}
 
           {route && (
-            <Flex justifyContent="flex-end">
+            <Flex style={{ marginTop: 12 }} justifyContent="flex-end">
               <ViewLink to={route}>View details</ViewLink>
             </Flex>
           )}

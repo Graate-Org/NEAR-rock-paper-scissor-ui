@@ -4,8 +4,6 @@ import { Link, useLocation, withRouter } from "react-router-dom";
 import { GameIcon, LogoutIcon, ProfileIcon, RoomIcon } from "../../icons";
 import Text from "../Text";
 
-
-
 const Wrapper = styled.div`
   width: 220px;
 `;
@@ -21,7 +19,6 @@ const Inner = styled.div`
   flex-direction: column;
   justify-content: center;
   padding: 40px 10px;
-
 `;
 
 const NavLink = styled(Link)<{ activepath?: string }>`
@@ -41,29 +38,33 @@ const NavLink = styled(Link)<{ activepath?: string }>`
 `;
 
 function Sidebar(): ReactElement {
-  const { pathname } = useLocation();  
+  const { pathname } = useLocation();
 
   return (
-    <Wrapper>
-      <Inner>
-        <NavLink activepath={(pathname === "/").toString()} to="/">
-          <ProfileIcon />
-          <Text fontWeight={500}>Profile</Text>
-        </NavLink>
-        <NavLink activepath={( pathname.split('/')[1] === "games").toString()} to="/games">
-          <GameIcon />
-          <Text fontWeight={500}>Games</Text>
-        </NavLink>
-        <NavLink activepath={( pathname.split('/')[1] === "rooms").toString()} to="/rooms">
-          <RoomIcon />
-          <Text fontWeight={500}>Rooms</Text>
-        </NavLink>
-        <NavLink to="/logout">
-          <LogoutIcon />
-          <Text fontWeight={500}>Log Out</Text>
-        </NavLink>
-      </Inner>
-    </Wrapper>
+    <>
+      {pathname !== "/login" && (
+        <Wrapper>
+          <Inner>
+            <NavLink activepath={(pathname === "/").toString()} to="/">
+              <ProfileIcon />
+              <Text fontWeight={500}>Profile</Text>
+            </NavLink>
+            <NavLink activepath={(pathname.split("/")[1] === "games").toString()} to="/games">
+              <GameIcon />
+              <Text fontWeight={500}>Games</Text>
+            </NavLink>
+            <NavLink activepath={(pathname.split("/")[1] === "rooms").toString()} to="/rooms">
+              <RoomIcon />
+              <Text fontWeight={500}>Rooms</Text>
+            </NavLink>
+            <NavLink to="/login">
+              <LogoutIcon />
+              <Text fontWeight={500}>Log Out</Text>
+            </NavLink>
+          </Inner>
+        </Wrapper>
+      )}
+    </>
   );
 }
 

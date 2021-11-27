@@ -16,6 +16,7 @@ interface Props {
 const Wrapper = styled.div`
   background-color: #2e3650;
   background-image: url('./room-bg.svg');
+  background-repeat: no-repeat;
   border-radius: 5px;
   position: relative;
   padding: 26px 20px 46px 20px;
@@ -37,7 +38,7 @@ const ViewLink = styled(Link)`
   text-decoration: underline;
 `;
 
-export default function GameCard({ created, membersCount, id, privacy, route, children }: Props): ReactElement {
+export default function RoomCard({ created, membersCount, id, privacy, route, children }: Props): ReactElement {
   return (
     <Wrapper>
       <Flex>
@@ -46,7 +47,7 @@ export default function GameCard({ created, membersCount, id, privacy, route, ch
             Room ID: {id}
           </CardText>
 
-          <CardText mb="17px" fontSize={14}>
+          <CardText mb="2px" fontSize={14}>
             Created: {created}
           </CardText>
 
@@ -62,7 +63,7 @@ export default function GameCard({ created, membersCount, id, privacy, route, ch
 
           {route && (
             <Flex justifyContent="flex-end">
-              <ViewLink to={route}>View details</ViewLink>
+              <ViewLink to={route}>View Room</ViewLink>
             </Flex>
           )}
         </div>
