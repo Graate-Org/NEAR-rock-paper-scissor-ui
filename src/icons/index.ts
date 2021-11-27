@@ -1,0 +1,10 @@
+export { default as ProfileIcon } from "./Profile";
+export { default as GameIcon } from "./Game";
+export { default as RoomIcon } from "./Room";
+export { default as HandPaperIcon } from "./HandPaper";
+export { default as HandRockIcon } from "./HandRock";
+export { default as HandScissorsIcon } from "./HandScissors";
+export { default as LogoutIcon } from "./Logout";
+export { default as AddCircleIcon } from "./AddCircle";
+export { default as ArrowLeftIcon } from "./ArrowLeft";
+export { default as CloseCircleIcon } from "./CloseCircle";
