@@ -1,13 +1,7 @@
-import React, { ReactElement } from 'react'
+import React, { ReactElement } from "react";
 
-interface Props {
-    
-}
+interface Props {}
 
 export default function CreateGame({}: Props): ReactElement {
-    return (
-        <div>
-            
-        </div>
-    )
+	return <div></div>;
 }

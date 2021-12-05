@@ -1,10 +1,10 @@
 export interface AppProps {
-	contract: any;
+	contract?: any;
 	currentUser?: {
 		accountId: string;
 		balance: string;
 	};
-	nearConfig: {
+	nearConfig?: {
 		networkId?: string;
 		nodeUrl?: string;
 		contractName?: string;
@@ -13,7 +13,7 @@ export interface AppProps {
 		keyPath?: string;
 		masterAccount?: string;
 	};
-	wallet: {
+	wallet?: {
 		_walletBaseUrl: string;
 		_authDataKey: string;
 		_keyStore: any;

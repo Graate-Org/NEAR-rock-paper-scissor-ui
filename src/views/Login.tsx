@@ -1,9 +1,9 @@
-import { ReactElement } from "react";
 import { useHistory } from "react-router";
 import RegularButton from "../components/Button";
 import Flex from "../components/Flex";
+import { AppProps } from "../interfaces/IApp.interface";
 
-export default function Login(): ReactElement {
+const Login: React.FC<AppProps> = () => {
 	const history = useHistory();
 
 	return (
@@ -11,4 +11,6 @@ export default function Login(): ReactElement {
 			<RegularButton onClick={() => history.push("/")}>Log In</RegularButton>
 		</Flex>
 	);
-}
+};
+
+export default Login;

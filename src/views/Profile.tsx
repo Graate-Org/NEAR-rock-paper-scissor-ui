@@ -1,10 +1,10 @@
-import React, { ReactElement } from "react";
 import styled from "styled-components";
 import CreateGameBtn, { GameStatsCard } from "../components/CreateGameBtn";
 import Flex from "../components/Flex";
 import GameCard from "../components/GameCard";
 import GameCardLegend from "../components/GameCard/Legend";
 import Spacing from "../components/Spacing";
+import { AppProps } from "../interfaces/IApp.interface";
 
 const CardGrid = styled.div`
 	display: grid;
@@ -12,7 +12,7 @@ const CardGrid = styled.div`
 	gap: 40px;
 `;
 
-export default function Profile(): ReactElement {
+const Profile: React.FC<AppProps> = () => {
 	return (
 		<div>
 			<Flex justifyContent="space-between" alignItems="center">
@@ -70,4 +70,6 @@ export default function Profile(): ReactElement {
 			</CardGrid>
 		</div>
 	);
-}
+};
+
+export default Profile;
