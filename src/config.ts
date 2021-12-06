@@ -1,4 +1,4 @@
-const CONTRACT_NAME = process.env.CONTRACT_NAME;
+const CONTRACT_NAME = process.env.REACT_APP_CONTRACT_NAME;
 
 const getConfig = (env: string) => {
 	switch (env) {
@@ -55,7 +55,7 @@ const getConfig = (env: string) => {
 			};
 		default:
 			throw Error(
-				`Unconfigured environment '${env}'. Can be configured in src/config.js.`
+				`Unconfigured environment '${env}'. Can be configured in src/config.ts.`
 			);
 	}
 }

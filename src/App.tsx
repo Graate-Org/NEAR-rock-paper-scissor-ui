@@ -18,14 +18,21 @@ const App: React.FC<AppProps> = ({
 	nearConfig,
 	wallet,
 }) => {
-	console.log(contract, currentUser, nearConfig, wallet);
-
 	return (
 		<BrowserRouter>
 			<ThemeProvider theme={theme}>
 				<Layout>
 					<Route exact path="/">
-						{!currentUser ? <Redirect to="/login" /> : <Profile />}
+						{!currentUser ? (
+							<Redirect to="/login" />
+						) : (
+							<Profile
+								contract={contract}
+								currentUser={currentUser}
+								nearConfig={nearConfig}
+								wallet={wallet}
+							/>
+						)}
 					</Route>
 					<Route exact path="/games" component={Games} />
 					<Route
@@ -36,6 +43,7 @@ const App: React.FC<AppProps> = ({
 								{...props}
 								contract={contract}
 								currentUser={currentUser}
+								nearConfig={nearConfig}
 								wallet={wallet}
 							/>
 						)}
@@ -44,7 +52,15 @@ const App: React.FC<AppProps> = ({
 					<Route exact path="/rooms" component={Rooms} />
 					<Route exact path="/rooms/:id" component={RoomView} />
 					<Route exact path="/login">
-						{currentUser ? <Redirect to="/" /> : <Login />}
+						{currentUser ? (
+							<Redirect to="/" />
+						) : (
+							<Login
+								contract={contract}
+								currentUser={currentUser}
+								wallet={wallet}
+							/>
+						)}
 					</Route>
 				</Layout>
 			</ThemeProvider>

@@ -13,6 +13,8 @@ interface IWindow extends Window {
 const initContract = async () => {
 	const nearConfig = getConfig(process.env.NODE_ENV || "testnet");
 
+	console.log(getConfig(process.env.NODE_ENV || "testnet"));
+
 	// Initializing connection to the NEAR TestNet
 	const near = await nearAPI.connect({
 		deps: {
@@ -22,7 +24,7 @@ const initContract = async () => {
 	});
 
 	// Needed to access wallet
-	const wallet = new nearAPI.WalletConnection(near, null);
+	const wallet = new nearAPI.WalletConnection(near, "NEAR Rock Paper Scissor");
 
 	// Load in account data
 	let currentUser;

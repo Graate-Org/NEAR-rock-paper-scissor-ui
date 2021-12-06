@@ -14,12 +14,20 @@ export interface AppProps {
 		masterAccount?: string;
 	};
 	wallet?: {
-		_walletBaseUrl: string;
-		_authDataKey: string;
-		_keyStore: any;
-		_authData: any;
-		_networkId: string;
-		_near: any;
-		_connectedAccount: any;
+		account?: () => any;
+		getAccountId?: () => any;
+		isSignedIn?: () => boolean;
+		requestSignTransactions?: (
+			transactions: any[],
+			callbackUrl?: string,
+			meta?: string
+		) => Promise<void>;
+		signout?: () => void;
+		requestSignIn?: (
+			contractId?: string,
+			title?: string,
+			successUrl?: string,
+			failureUrl?: string
+		) => Promise<void>;
 	};
 }
