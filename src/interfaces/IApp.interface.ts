@@ -22,7 +22,7 @@ export interface AppProps {
 			callbackUrl?: string,
 			meta?: string
 		) => Promise<void>;
-		signout?: () => void;
+		signOut?: () => void;
 		requestSignIn?: (
 			contractId?: string,
 			title?: string,

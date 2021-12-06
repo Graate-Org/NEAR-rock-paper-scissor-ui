@@ -13,8 +13,6 @@ interface IWindow extends Window {
 const initContract = async () => {
 	const nearConfig = getConfig(process.env.NODE_ENV || "testnet");
 
-	console.log(getConfig(process.env.NODE_ENV || "testnet"));
-
 	// Initializing connection to the NEAR TestNet
 	const near = await nearAPI.connect({
 		deps: {
