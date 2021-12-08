@@ -6,6 +6,7 @@ import ModalComponent from ".";
 import RegularButton from "../components/Button";
 import Text from "../components/Text";
 import { AppProps, Visibility } from "../interfaces/IApp.interface";
+import Spinner from "../icons/Spinner";
 
 export type playProps = "rock" | "paper" | "scissors";
 
@@ -82,15 +83,7 @@ const CreateRoomModal: React.FC<Props> = ({ handleClose, open, contract }) => {
 						</PlayWrapper>
 					</>
 				) : (
-					<Text
-						fontSize={14}
-						fontWeight={500}
-						textAlign="center"
-						transform="capitalize"
-						mt="2rem"
-					>
-						Creating room...
-					</Text>
+					<Spinner />
 				)}
 			</ModalComponent>
 		</>

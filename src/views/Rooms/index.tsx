@@ -6,6 +6,7 @@ import CreateGameBtn from "../../components/CreateGameBtn";
 import Flex from "../../components/Flex";
 import RoomCard from "../../components/RoomCard";
 import Text from "../../components/Text";
+import Spinner from "../../icons/Spinner";
 import { AppProps } from "../../interfaces/IApp.interface";
 import { Room } from "../../interfaces/IRoom.interface";
 import CreateRoomModal from "../../modals/CreateRoomModal";
@@ -20,17 +21,24 @@ const CardGrid = styled.div`
 const Rooms: React.FC<AppProps> = ({ contract, currentUser }) => {
 	const [rooms, setRooms] = useState<Room[]>([]);
 	const [showModal, setShowModal] = useState(false);
+	const [loading, setLoading] = useState(false);
 
 	useEffect(() => {
 		const getRooms = async () => {
+			setLoading(true);
+
 			try {
 				const res: Room[] = await contract.getRooms({
 					isJoined: true,
 					acct: currentUser?.accountId,
 				});
+
 				setRooms(res);
+
+				setLoading(false);
 			} catch (error) {
 				console.log(error);
+				setLoading(false);
 			}
 		};
 
@@ -49,7 +57,9 @@ const Rooms: React.FC<AppProps> = ({ contract, currentUser }) => {
 			</Flex>
 
 			<CardGrid>
-				{rooms?.length ? (
+				{loading ? (
+					<Spinner />
+				) : rooms?.length ? (
 					rooms?.map((room) => (
 						<RoomCard
 							key={room?.id}
