@@ -31,3 +31,7 @@ export interface AppProps {
 		) => Promise<void>;
 	};
 }
+
+export type Status = "CREATED" | "ACTIVE" | "COMPLETED";
+
+export type Visibility = "PRIVATE" | "PUBLIC";

@@ -16,7 +16,7 @@ const Profile: React.FC<AppProps> = () => {
 	return (
 		<div>
 			<Flex justifyContent="space-between" alignItems="center">
-				<CreateGameBtn />
+				<CreateGameBtn onClick={() => {}} />
 				<GameStatsCard win={3} draw={0} loss={1} />
 			</Flex>
 

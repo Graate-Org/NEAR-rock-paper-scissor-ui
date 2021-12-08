@@ -7,9 +7,7 @@ const Login: React.FC<AppProps> = ({ contract, wallet }) => {
 		if (wallet?.requestSignIn) {
 			await wallet
 				.requestSignIn(contract.contractId, "NEAR Rock Paper Scissor")
-				.then((res) => {
-					console.log(res);
-				})
+				.then(console.log)
 				.catch(console.log);
 		}
 	};

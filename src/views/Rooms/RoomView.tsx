@@ -9,8 +9,6 @@ import Text from "../../components/Text";
 import { AppProps } from "../../interfaces/IApp.interface";
 import { GameCardGrid } from "../Games";
 
-// interface Props {}
-
 const games: gameProps[] = [
 	{
 		id: "2836363-567343525",
@@ -104,13 +102,13 @@ const GamesList = (props: { games: gameProps[] }): ReactElement => (
 	</>
 );
 
-const GameView: React.FC<AppProps> = () => {
+const GameView: React.FC<AppProps> = ({ currentUser }) => {
 	const [activeTab, setActiveTab] = React.useState<"games" | "members">(
 		"games"
 	);
 	return (
 		<>
-			<AppBar route="/rooms" title="Rooms" />
+			<AppBar route="/rooms" title="Rooms" currentUser={currentUser} />
 			<Flex justifyContent="center" itemsFlex={0.6}>
 				<CardWrapper style={{ paddingBottom: 26 }}>
 					<Text mb="30px" textAlign="center" fontWeight={600} fontSize={24}>

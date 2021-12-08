@@ -59,12 +59,15 @@ const LogoutButton = styled.p`
 
 interface SidebarProps extends AppProps, RouteComponentProps {}
 
-const Sidebar: React.FC<SidebarProps> = ({ wallet, }) => {
+const Sidebar: React.FC<SidebarProps> = ({ wallet }) => {
 	const { pathname } = useLocation();
 
 	const handleLogout = () => {
 		if (wallet?.signOut) {
 			wallet.signOut();
+			window.location.replace(
+				window.location.origin + window.location.pathname
+			);
 		}
 	};
 

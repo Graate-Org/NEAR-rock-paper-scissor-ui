@@ -8,7 +8,7 @@ import { AppProps } from "../interfaces/IApp.interface";
 import PlayModal, { playProps } from "../modals/PlayModal";
 import ViewPlaysModal from "../modals/ViewPlaysModal";
 
-const GameView: React.FC<AppProps> = () => {
+const GameView: React.FC<AppProps> = ({ currentUser }) => {
 	const [playModal, setPlayModal] = useState<boolean>(false);
 	const [play, setPlay] = useState<playProps>("rock");
 
@@ -20,7 +20,7 @@ const GameView: React.FC<AppProps> = () => {
 
 	return (
 		<>
-			<AppBar route="/games" title="Games" />
+			<AppBar route="/games" title="Games" currentUser={currentUser} />
 			<Flex justifyContent="center" itemsFlex={0.65}>
 				<GameCard
 					id="2836363-567343525"

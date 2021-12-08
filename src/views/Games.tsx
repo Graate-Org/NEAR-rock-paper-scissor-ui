@@ -13,12 +13,12 @@ export const GameCardGrid = styled.div`
 	gap: 40px;
 `;
 
-const Games: React.FC<AppProps> = () => {
+const Games: React.FC<AppProps> = ({ currentUser, wallet }) => {
 	return (
 		<div>
-			<AppBar route="/" title="Home" />
+			<AppBar route="/" title="Home" currentUser={currentUser} />
 			<Flex justifyContent="space-between" alignItems="center">
-				<CreateGameBtn />
+				<CreateGameBtn onClick={() => {}} />
 			</Flex>
 			<Spacing marginTop="22px" marginBottom="54px">
 				<GameCardLegend />
