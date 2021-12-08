@@ -5,7 +5,6 @@ import { ThemeProvider } from "styled-components";
 import Layout from "./components/Layout";
 import { theme } from "./config/theme";
 import { AppProps } from "./interfaces/IApp.interface";
-import Games from "./views/Games";
 import GameView from "./views/GameView";
 import Login from "./views/Login";
 import Profile from "./views/Profile";
@@ -34,23 +33,6 @@ const App: React.FC<AppProps> = ({
 							/>
 						)}
 					</Route>
-					<Route
-						exact
-						path="/games"
-						render={(props) =>
-							currentUser ? (
-								<Games
-									{...props}
-									contract={contract}
-									currentUser={currentUser}
-									nearConfig={nearConfig}
-									wallet={wallet}
-								/>
-							) : (
-								<Login contract={contract} wallet={wallet} />
-							)
-						}
-					/>
 					<Route
 						exact
 						path="/games/:id"

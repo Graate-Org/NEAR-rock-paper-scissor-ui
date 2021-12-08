@@ -17,7 +17,7 @@ const CardGrid = styled.div`
 	margin-top: 3rem;
 `;
 
-const Rooms: React.FC<AppProps> = ({ wallet, contract, currentUser }) => {
+const Rooms: React.FC<AppProps> = ({ contract, currentUser }) => {
 	const [rooms, setRooms] = useState<Room[]>([]);
 	const [showModal, setShowModal] = useState(false);
 

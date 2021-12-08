@@ -5,7 +5,7 @@ import {
 	useLocation,
 	withRouter,
 } from "react-router-dom";
-import { GameIcon, LogoutIcon, ProfileIcon, RoomIcon } from "../../icons";
+import { LogoutIcon, ProfileIcon, RoomIcon } from "../../icons";
 import Text from "../Text";
 import { AppProps } from "../../interfaces/IApp.interface";
 
@@ -79,13 +79,6 @@ const Sidebar: React.FC<SidebarProps> = ({ wallet }) => {
 						<NavLink activepath={(pathname === "/").toString()} to="/">
 							<ProfileIcon />
 							<Text fontWeight={500}>Profile</Text>
-						</NavLink>
-						<NavLink
-							activepath={(pathname.split("/")[1] === "games").toString()}
-							to="/games"
-						>
-							<GameIcon />
-							<Text fontWeight={500}>Games</Text>
 						</NavLink>
 						<NavLink
 							activepath={(pathname.split("/")[1] === "rooms").toString()}
