@@ -39,6 +39,17 @@ const initContract = async () => {
 		nearConfig.contractName as string,
 		{
 			viewMethods: [
+				"getRooms",
+				"getRoomMembers",
+				"getRoomRequests",
+				"getRoomGames",
+				"getRoom",
+				"getProfile",
+				"getGamePlayers",
+				"getGameStakers",
+				"getWinner",
+			],
+			changeMethods: [
 				"createRoom",
 				"joinPublicRoom",
 				"requestToJoinPrivateRoom",
@@ -47,14 +58,6 @@ const initContract = async () => {
 				"play",
 				"stake",
 				"payout",
-			],
-			changeMethods: [
-				"getRooms",
-				"getRoomMembers",
-				"getRoomRequests",
-				"getAllGames",
-				"getGamePlayers",
-				"getGameStakers",
 			],
 		}
 	);
