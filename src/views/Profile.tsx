@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import CreateGameBtn, { GameStatsCard } from "../components/CreateGameBtn";
 import Flex from "../components/Flex";
-import GameCard from "../components/GameCard";
+// import GameCard from "../components/GameCard";
 import GameCardLegend from "../components/GameCard/Legend";
 import Spacing from "../components/Spacing";
 import { AppProps } from "../interfaces/IApp.interface";
@@ -25,7 +25,7 @@ const Profile: React.FC<AppProps> = () => {
 			</Spacing>
 
 			<CardGrid>
-				<GameCard
+				{/* <GameCard
 					id="2836363-567343525"
 					status="created"
 					route="/games/2836363-567343525"
@@ -66,7 +66,7 @@ const Profile: React.FC<AppProps> = () => {
 					route="/games/2836363-567343525"
 					staked={4352}
 					created="7th November 2021"
-				/>
+				/> */}
 			</CardGrid>
 		</div>
 	);

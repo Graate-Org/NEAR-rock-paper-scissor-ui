@@ -1,4 +1,3 @@
-import moment from "moment";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import AppBar from "../../components/AppBar";
@@ -10,6 +9,7 @@ import Spinner from "../../icons/Spinner";
 import { AppProps } from "../../interfaces/IApp.interface";
 import { Room } from "../../interfaces/IRoom.interface";
 import CreateRoomModal from "../../modals/CreateRoomModal";
+import { parseDate } from "../../utils/helperFunctions";
 
 const CardGrid = styled.div`
 	display: grid;
@@ -45,9 +45,6 @@ const Rooms: React.FC<AppProps> = ({ contract, currentUser }) => {
 		getRooms();
 	}, [contract, currentUser?.accountId, showModal]);
 
-	const date = (timestamp: string) => {
-		return moment().format("Do MMMM YYYY");
-	};
 
 	return (
 		<div>
@@ -67,7 +64,7 @@ const Rooms: React.FC<AppProps> = ({ contract, currentUser }) => {
 							privacy={room?.isVisible === 0 ? "public" : "private"}
 							route={`/rooms/${room?.id}`}
 							membersCount={room?.members?.length || 0}
-							created={date(room?.createdAt)}
+							created={parseDate(room?.createdAt)}
 						/>
 					))
 				) : (

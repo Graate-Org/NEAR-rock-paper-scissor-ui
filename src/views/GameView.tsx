@@ -24,11 +24,9 @@ const GameView: React.FC<AppProps> = ({ currentUser }) => {
 			<Flex justifyContent="center" itemsFlex={0.65}>
 				<GameCard
 					id="2836363-567343525"
-					status="created"
+					status="CREATED"
 					staked={4352}
-					created="7th November 2021"
-					player1="melvinmanni.testnet"
-					player2="bot"
+					createdAt='"7th November 2021"'
 					winner="Pending..."
 				>
 					<Spacing marginTop="39px" marginBottom="15px">
