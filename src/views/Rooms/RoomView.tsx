@@ -69,6 +69,7 @@ const GamesList = (props: { games: Game[] }): ReactElement => {
 							staked={totalStake(game)}
 							status={game.status}
 							id={game.id}
+							players={game.players}
 						/>
 					))}
 				</GameCardGrid>
@@ -160,8 +161,6 @@ const GameView: React.FC<AppProps> = ({ currentUser, contract }) => {
 			}
 		}
 	};
-
-	console.log(games);
 
 	const createGame = async () => {
 		try {

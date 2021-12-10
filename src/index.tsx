@@ -48,6 +48,7 @@ const initContract = async () => {
 				"getGamePlayers",
 				"getGameStakers",
 				"getWinner",
+				"getGame"
 			],
 			changeMethods: [
 				"createRoom",

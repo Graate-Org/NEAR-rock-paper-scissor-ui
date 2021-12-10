@@ -10,9 +10,10 @@ interface Props {
 	staked: number;
 	id: string;
 	createdAt: string;
-	status: Game["status"];
+	status: number;
 	winner?: string;
 	children?: React.ReactNode;
+	players: Game["players"];
 }
 
 export type gameProps = Props;
@@ -25,13 +26,13 @@ const Wrapper = styled.div`
 	padding: 26px 20px 46px 20px;
 `;
 
-const CardBar = styled.div<{ status: Game["status"] }>`
+const CardBar = styled.div<{ status: number }>`
 	background: ${({ status }) =>
-		status === "ACTIVE"
+		status === 1
 			? "#10DCE9"
-			: status === "CREATED"
+			: status === 0
 			? "#F5A621"
-			: status === "COMPLETED"
+			: status === 2
 			? "#E23332"
 			: null};
 	position: absolute;
@@ -62,6 +63,7 @@ export default function GameCard({
 	id,
 	winner,
 	children,
+	players,
 }: Props): ReactElement {
 	return (
 		<Wrapper>
@@ -80,17 +82,13 @@ export default function GameCard({
 						Created: {parseDate(createdAt)}
 					</CardText>
 
-					{/* {player1 && (
-						<CardText mb="2px" fontSize={14}>
-							Player1: {player1}
-						</CardText>
-					)}
-
-					{player2 && (
-						<CardText mb="2px" fontSize={14}>
-							Player2: {player2}
-						</CardText>
-					)} */}
+					{players?.length
+						? players.map((player, idx) => (
+								<CardText key={player.id} mb="2px" fontSize={14}>
+									Player`${idx + 1}`: {player?.name}
+								</CardText>
+						  ))
+						: null}
 
 					{winner && (
 						<CardText mb="2px" fontSize={14}>

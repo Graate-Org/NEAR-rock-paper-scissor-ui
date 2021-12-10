@@ -15,10 +15,11 @@ export interface Game {
 	}[];
 	createdBy: string;
 	createdAt: string;
-	status: "CREATED" | "ACTIVE" | "COMPLETED";
+	status: number;
 	winners: {
 		gameId: string;
 		accountId: string;
 	}[];
-	pool: number;
+  pool: number;
+  roomId?: string;
 }
