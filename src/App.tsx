@@ -33,57 +33,42 @@ const App: React.FC<AppProps> = ({
 							/>
 						)}
 					</Route>
-					<Route
-						exact
-						path="/games/:id"
-						render={(props) =>
-							currentUser ? (
-								<GameView
-									{...props}
-									contract={contract}
-									currentUser={currentUser}
-									nearConfig={nearConfig}
-									wallet={wallet}
-								/>
-							) : (
-								<Login contract={contract} wallet={wallet} />
-							)
-						}
-					/>
-					<Route
-						exact
-						path="/rooms"
-						render={(props) =>
-							currentUser ? (
-								<Rooms
-									{...props}
-									contract={contract}
-									currentUser={currentUser}
-									nearConfig={nearConfig}
-									wallet={wallet}
-								/>
-							) : (
-								<Login contract={contract} wallet={wallet} />
-							)
-						}
-					/>
-					<Route
-						exact
-						path="/rooms/:id"
-						render={(props) =>
-							currentUser ? (
-								<RoomView
-									{...props}
-									contract={contract}
-									currentUser={currentUser}
-									nearConfig={nearConfig}
-									wallet={wallet}
-								/>
-							) : (
-								<Login contract={contract} wallet={wallet} />
-							)
-						}
-					/>
+					<Route exact path="/games/:id">
+						{currentUser ? (
+							<GameView
+								contract={contract}
+								currentUser={currentUser}
+								nearConfig={nearConfig}
+								wallet={wallet}
+							/>
+						) : (
+							<Redirect to="/login" />
+						)}
+					</Route>
+					<Route exact path="/rooms">
+						{currentUser ? (
+							<Rooms
+								contract={contract}
+								currentUser={currentUser}
+								nearConfig={nearConfig}
+								wallet={wallet}
+							/>
+						) : (
+							<Redirect to="/login" />
+						)}
+					</Route>
+					<Route exact path="/rooms/:id">
+						{currentUser ? (
+							<RoomView
+								contract={contract}
+								currentUser={currentUser}
+								nearConfig={nearConfig}
+								wallet={wallet}
+							/>
+						) : (
+							<Redirect to="/login" />
+						)}
+					</Route>
 					<Route exact path="/login">
 						{currentUser ? (
 							<Redirect to="/" />

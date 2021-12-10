@@ -10,7 +10,6 @@ import { AppProps } from "../interfaces/IApp.interface";
 import { Game } from "../interfaces/IGame.interface";
 import PlayModal, { playProps } from "../modals/PlayModal";
 import ViewPlaysModal from "../modals/ViewPlaysModal";
-import { parseDate } from "../utils/helperFunctions";
 
 const GameView: React.FC<AppProps> = ({ currentUser, contract }) => {
 	const { id } = useParams<{ id: string }>();
