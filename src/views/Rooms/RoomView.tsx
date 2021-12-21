@@ -22,7 +22,7 @@ const CardWrapper = styled.div`
 	padding: 26px 20px 46px 20px;
 `;
 
-const RoomTab = styled.div`
+export const RoomTab = styled.div`
 	margin: 10px auto;
 	display: flex;
 	border-radius: 8px;
@@ -30,7 +30,7 @@ const RoomTab = styled.div`
 	border: 0.1px solid #f2f2f221;
 `;
 
-const TabBtn = styled(RegularButton)<{ activeTab: boolean }>`
+export const TabBtn = styled(RegularButton)<{ activeTab: boolean }>`
 	padding: 15px;
 	min-width: unset;
 	box-shadow: unset;

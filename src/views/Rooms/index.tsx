@@ -10,6 +10,7 @@ import { AppProps } from "../../interfaces/IApp.interface";
 import { Room } from "../../interfaces/IRoom.interface";
 import CreateRoomModal from "../../modals/CreateRoomModal";
 import { parseDate } from "../../utils/helperFunctions";
+import { RoomTab, TabBtn } from "./RoomView";
 
 const CardGrid = styled.div`
 	display: grid;
@@ -20,8 +21,10 @@ const CardGrid = styled.div`
 
 const Rooms: React.FC<AppProps> = ({ contract, currentUser }) => {
 	const [rooms, setRooms] = useState<Room[]>([]);
+	const [nonMemberRooms, setNonMemberRooms] = useState<Room[]>([]);
 	const [showModal, setShowModal] = useState(false);
 	const [loading, setLoading] = useState(false);
+	const [activeTab, setActiveTab] = useState<"joined" | "not-joined">("joined");
 
 	useEffect(() => {
 		const getRooms = async () => {
@@ -33,7 +36,13 @@ const Rooms: React.FC<AppProps> = ({ contract, currentUser }) => {
 					acct: currentUser?.accountId,
 				});
 
+				const res2: Room[] = await contract.getRooms({
+					isJoined: false,
+					acct: currentUser?.accountId,
+				});
+
 				setRooms(res);
+				setNonMemberRooms(res2)
 
 				setLoading(false);
 			} catch (error) {
@@ -45,7 +54,6 @@ const Rooms: React.FC<AppProps> = ({ contract, currentUser }) => {
 		getRooms();
 	}, [contract, currentUser?.accountId, showModal]);
 
-
 	return (
 		<div>
 			<AppBar route="/" title="Home" currentUser={currentUser} />
@@ -53,24 +61,62 @@ const Rooms: React.FC<AppProps> = ({ contract, currentUser }) => {
 				<CreateGameBtn text="Create Room" onClick={() => setShowModal(true)} />
 			</Flex>
 
-			<CardGrid>
-				{loading ? (
-					<Spinner />
-				) : rooms?.length ? (
-					rooms?.map((room) => (
-						<RoomCard
-							key={room?.id}
-							id={room?.id}
-							privacy={room?.isVisible === 0 ? "public" : "private"}
-							route={`/rooms/${room?.id}`}
-							membersCount={room?.members?.length || 0}
-							created={parseDate(room?.createdAt)}
-						/>
-					))
-				) : (
-					<Text textAlign="center">No room yet! Create one</Text>
-				)}
-			</CardGrid>
+			<Flex justifyContent="center">
+				<RoomTab>
+					<TabBtn
+						onClick={() => setActiveTab("joined")}
+						activeTab={activeTab === "joined"}
+					>
+						Rooms I'm a Member of
+					</TabBtn>
+					<TabBtn
+						onClick={() => setActiveTab("not-joined")}
+						activeTab={activeTab === "not-joined"}
+					>
+						Rooms I'm not a Member of
+					</TabBtn>
+				</RoomTab>
+			</Flex>
+
+			{activeTab === "joined" ? (
+				<CardGrid>
+					{loading ? (
+						<Spinner />
+					) : rooms?.length ? (
+						rooms?.map((room) => (
+							<RoomCard
+								key={room?.id}
+								id={room?.id}
+								privacy={room?.isVisible === 0 ? "public" : "private"}
+								route={`/rooms/${room?.id}`}
+								membersCount={room?.members?.length || 0}
+								created={parseDate(room?.createdAt)}
+							/>
+						))
+					) : (
+						<Text textAlign="center">No room yet! Create one</Text>
+					)}
+				</CardGrid>
+			) : (
+				<CardGrid>
+					{loading ? (
+						<Spinner />
+					) : nonMemberRooms?.length ? (
+						nonMemberRooms?.map((room) => (
+							<RoomCard
+								key={room?.id}
+								id={room?.id}
+								privacy={room?.isVisible === 0 ? "public" : "private"}
+								route={`/rooms/${room?.id}`}
+								membersCount={room?.members?.length || 0}
+								created={parseDate(room?.createdAt)}
+							/>
+						))
+					) : (
+						<Text textAlign="center">No room yet! Create one</Text>
+					)}
+				</CardGrid>
+			)}
 			<CreateRoomModal
 				open={showModal}
 				handleClose={() => setShowModal(false)}
