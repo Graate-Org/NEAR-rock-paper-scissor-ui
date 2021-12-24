@@ -84,10 +84,38 @@ const GamesList = (props: {
 	);
 };
 
+const RequestList: React.FC<{ requests: RoomRequest[] }> = ({ requests }) => {
+	return (
+		<>
+			{requests?.length ? (
+				requests.map((val) => (
+					<div style={{ marginBottom: "3rem" }}>
+						<Text fontSize={16} mb="10px" textAlign="left" fontWeight={500}>
+							{val?.accountId} wants to join this room.
+						</Text>
+						<Flex justifyContent="center">
+							<RegularButton onClick={() => {}} mt="15px" mr="10px">
+								Accept
+							</RegularButton>
+							<RegularButton onClick={() => {}} mt="15px">
+								Reject
+							</RegularButton>
+						</Flex>
+					</div>
+				))
+			) : (
+				<Text textAlign="center">No Requests Yet</Text>
+			)}
+		</>
+	);
+};
+
 const GameView: React.FC<AppProps> = ({ currentUser, contract }) => {
 	const { id } = useParams<{ id: string }>();
 	const history = useHistory();
-	const [activeTab, setActiveTab] = useState<"games" | "members">("games");
+	const [activeTab, setActiveTab] = useState<"games" | "members" | "requests">(
+		"games"
+	);
 	const [details, setDetails] = useState<Room>();
 	const [games, setGames] = useState<Game[]>([]);
 	const [loading, setLoading] = useState(false);
@@ -95,6 +123,7 @@ const GameView: React.FC<AppProps> = ({ currentUser, contract }) => {
 	const [requestPending, setRequestPending] = useState(false);
 	const [syncing, setSyncing] = useState(false);
 	const [members, setMembers] = useState<Room["members"]>([]);
+	const [requests, setRequests] = useState<RoomRequest[]>([]);
 	const [checkingRequest, setCheckingRequest] = useState(true);
 
 	const txFee = Big(0.5)
@@ -142,12 +171,6 @@ const GameView: React.FC<AppProps> = ({ currentUser, contract }) => {
 		if (details?.id) {
 			getMembers();
 		}
-
-		console.log(
-			Big(0.1)
-				.times(10 ** 24)
-				.toFixed()
-		);
 	}, [contract, details?.id]);
 
 	useEffect(() => {
@@ -158,13 +181,15 @@ const GameView: React.FC<AppProps> = ({ currentUser, contract }) => {
 						_roomId: id,
 					});
 
+					setRequests(res);
+
 					const arr = res.filter(
 						(req) => req.accountId === currentUser?.accountId
 					);
 
-					setRequestPending(
-						arr?.length ? true : arr[0]?.state !== 1 ? true : false
-					);
+					const isPending = arr?.length && arr[0]?.state !== 1 ? true : false;
+
+					setRequestPending(isPending);
 
 					setCheckingRequest(false);
 				} catch (error: any) {
@@ -193,39 +218,41 @@ const GameView: React.FC<AppProps> = ({ currentUser, contract }) => {
 	const joinRoom = async () => {
 		setSyncing(true);
 
-		if (details?.isVisible === 0) {
-			try {
-				const res = await contract.joinPublicRoom({
+		try {
+			const res = await contract.joinPublicRoom({
+				_roomId: details?.id,
+				_isVisible: true,
+			});
+
+			res && setReload(!reload);
+			setSyncing(false);
+		} catch (error) {
+			console.log(error);
+			setSyncing(false);
+		}
+	};
+
+	const requestToJoinRoom = async () => {
+		setSyncing(true);
+
+		const privateRmTxFee = Big(0.5)
+			.times(10 ** 24)
+			.toFixed();
+
+		try {
+			await contract.requestToJoinPrivateRoom(
+				{
 					_roomId: details?.id,
-					_isVisible: true,
-				});
+				},
+				GAS,
+				privateRmTxFee
+			);
 
-				res && setReload(!reload);
-				setSyncing(false);
-			} catch (error) {
-				console.log(error);
-				setSyncing(false);
-			}
-		} else {
-			const privateRmTxFee = Big(0.5)
-				.times(10 ** 24)
-				.toFixed();
-
-			try {
-				await contract.requestToJoinPrivateRoom(
-					{
-						_roomId: details?.id,
-					},
-					GAS,
-					privateRmTxFee
-				);
-
-				setSyncing(false);
-				setRequestPending(true);
-			} catch (error) {
-				console.log(error);
-				setSyncing(false);
-			}
+			setSyncing(false);
+			setRequestPending(true);
+		} catch (error) {
+			console.log(error);
+			setSyncing(false);
 		}
 	};
 
@@ -234,6 +261,20 @@ const GameView: React.FC<AppProps> = ({ currentUser, contract }) => {
 			await contract.createGame({ _roomId: id }, GAS, txFee);
 		} catch (error) {
 			console.log(error);
+		}
+	};
+
+	const clickHandler = () => {
+		if (isMember || isOwner) {
+			return createGame();
+		}
+
+		if (details?.isVisible === 0) {
+			return joinRoom();
+		}
+
+		if (details?.isVisible === 1) {
+			return requestToJoinRoom();
 		}
 	};
 
@@ -274,10 +315,7 @@ const GameView: React.FC<AppProps> = ({ currentUser, contract }) => {
 								) : syncing || checkingRequest ? (
 									<Spinner />
 								) : (
-									<RegularButton
-										onClick={isOwner || isMember ? createGame : joinRoom}
-										mt="15px"
-									>
+									<RegularButton onClick={clickHandler} mt="15px">
 										{isOwner || isMember ? "CREATE GAME" : "JOIN ROOM"}
 									</RegularButton>
 								)}
@@ -300,6 +338,14 @@ const GameView: React.FC<AppProps> = ({ currentUser, contract }) => {
 								>
 									Members
 								</TabBtn>
+								{currentUser?.accountId === details?.owner && (
+									<TabBtn
+										onClick={() => setActiveTab("requests")}
+										activeTab={activeTab === "requests"}
+									>
+										Requests
+									</TabBtn>
+								)}
 							</RoomTab>
 						</Flex>
 					</Spacing>
@@ -318,6 +364,9 @@ const GameView: React.FC<AppProps> = ({ currentUser, contract }) => {
 								)}
 								{activeTab === "games" && (
 									<GamesList games={games} disabled={requestPending} />
+								)}
+								{activeTab === "requests" && (
+									<RequestList requests={requests} />
 								)}
 							</Flex>
 						</CardWrapper>
