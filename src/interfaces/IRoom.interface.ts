@@ -15,3 +15,9 @@ export interface Room {
 	}[];
 	createdAt: string;
 }
+
+export interface RoomRequest {
+	accountId: string;
+	roomId: string;
+	state: 0 | 1 | 2;
+}

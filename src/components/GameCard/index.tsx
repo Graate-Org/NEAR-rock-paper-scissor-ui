@@ -14,6 +14,7 @@ interface Props {
 	winner?: string;
 	children?: React.ReactNode;
 	players: Game["players"];
+	disabled?: boolean;
 }
 
 export type gameProps = Props;
@@ -64,6 +65,7 @@ export default function GameCard({
 	winner,
 	children,
 	players,
+	disabled,
 }: Props): ReactElement {
 	return (
 		<Wrapper>
@@ -100,9 +102,11 @@ export default function GameCard({
 						<div style={{ width: "100%", margin: "10px" }}>{children}</div>
 					)}
 
-					<Flex style={{ marginTop: 12 }} justifyContent="flex-end">
-						<ViewLink to={`/games/${id}`}>View details</ViewLink>
-					</Flex>
+					{!disabled && (
+						<Flex style={{ marginTop: 12 }} justifyContent="flex-end">
+							<ViewLink to={`/games/${id}`}>View details</ViewLink>
+						</Flex>
+					)}
 				</div>
 			</Flex>
 		</Wrapper>
