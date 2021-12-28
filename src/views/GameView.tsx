@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
+import Big from "big.js";
 import AppBar from "../components/AppBar";
 import RegularButton from "../components/Button";
 import Flex from "../components/Flex";
@@ -7,15 +8,12 @@ import GameCard from "../components/GameCard";
 import Spacing from "../components/Spacing";
 import Spinner from "../icons/Spinner";
 import { AppProps } from "../interfaces/IApp.interface";
-import { Game } from "../interfaces/IGame.interface";
-import PlayModal, { playProps } from "../modals/PlayModal";
+import { Game, Player } from "../interfaces/IGame.interface";
 import ViewPlaysModal from "../modals/ViewPlaysModal";
 
 const GameView: React.FC<AppProps> = ({ currentUser, contract }) => {
 	const { id } = useParams<{ id: string }>();
 	const history = useHistory();
-	const [playModal, setPlayModal] = useState<boolean>(false);
-	const [play, setPlay] = useState<playProps>("rock");
 	const [loading, setLoading] = useState(false);
 	const [details, setDetails] = useState<Game>({
 		id: "",
@@ -29,10 +27,10 @@ const GameView: React.FC<AppProps> = ({ currentUser, contract }) => {
 		pool: 0,
 	});
 	const [viewPlayModal, setViewPlayModal] = useState<boolean>(false);
-	const [play1, setPlay1] = useState<playProps>("rock");
-	const [play2, setPlay2] = useState<playProps>("rock");
-
-	const playArr: playProps[] = ["scissors", "rock", "paper"];
+	const [players, setPlayers] = useState<Player[]>([]);
+	const isAPlayer = players.find(
+		(player) => player.name === currentUser?.accountId
+	);
 
 	useEffect(() => {
 		if (id) {
@@ -41,6 +39,10 @@ const GameView: React.FC<AppProps> = ({ currentUser, contract }) => {
 
 				try {
 					const res: Game[] = await contract?.getGame({ _gameId: id });
+					const res2: Player[] = await contract?.getGamePlayers({
+						_gameId: id,
+					});
+					setPlayers(res2);
 					setDetails(res[0]);
 					setLoading(false);
 				} catch (error) {
@@ -62,6 +64,54 @@ const GameView: React.FC<AppProps> = ({ currentUser, contract }) => {
 		return 0;
 	};
 
+	const handlePlay = async () => {
+		const txFee = Big(0.2)
+			.times(10 ** 24)
+			.toFixed();
+
+		const GAS = Big(3)
+			.times(10 ** 13)
+			.toFixed();
+
+		try {
+			await contract?.play({ _gameId: details?.id }, GAS, txFee);
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
+	const disablePlay = useMemo(() => {
+		if (isAPlayer) {
+			return true;
+		}
+
+		if (players?.length === details?.numOfPlayers) {
+			return true;
+		}
+
+		return false;
+	}, [isAPlayer, players?.length, details?.numOfPlayers]);
+
+	const choice = useMemo(() => {
+		if (isAPlayer) {
+			return isAPlayer?.choice === 0
+				? "ROCK"
+				: isAPlayer?.choice === 1
+				? "PAPER"
+				: "SCISSORS";
+		}
+
+		return undefined;
+	}, [isAPlayer]);
+
+	const player2TimePlayed = useMemo(() => {
+		if (players?.length === details?.numOfPlayers) {
+			return players[details?.numOfPlayers - 1]?.timePlayed;
+		}
+
+		return undefined;
+	}, [details?.numOfPlayers, players]);
+
 	return (
 		<>
 			<AppBar
@@ -74,36 +124,25 @@ const GameView: React.FC<AppProps> = ({ currentUser, contract }) => {
 			) : (
 				<Flex justifyContent="center" itemsFlex={0.65}>
 					<GameCard
-						id={id}
+						id={details?.id}
 						status={details?.status}
 						staked={totalStake()}
 						createdAt={details?.createdAt}
-						winner="Pending..."
-						players={details?.players.length ? details?.players : []}
+						players={players.length ? players : []}
+						choice={choice}
+						maxPlayersReached={
+							!isAPlayer && players?.length === details?.numOfPlayers
+						}
+						player2TimePlayed={player2TimePlayed}
+						contract={contract}
 					>
 						<Spacing marginTop="39px" marginBottom="15px">
 							<Flex justifyContent="space-between" flex={0.3}>
-								<RegularButton
-									onClick={() => {
-										const randomPlay1: playProps =
-											playArr[Math.floor(Math.random() * 3)];
-										const randomPlay2: playProps =
-											playArr[Math.floor(Math.random() * 3)];
-										setPlay1(randomPlay1);
-										setPlay2(randomPlay2);
-										setViewPlayModal(true);
-									}}
-								>
-									View Plays
-								</RegularButton>
 								<RegularButton onClick={() => {}}>Stake</RegularButton>
 								<RegularButton
-									onClick={() => {
-										const randomPlay: playProps =
-											playArr[Math.floor(Math.random() * 3)];
-										setPlay(randomPlay);
-										setPlayModal(true);
-									}}
+									aria-disabled={disablePlay}
+									disabled={disablePlay}
+									onClick={handlePlay}
 								>
 									Play
 								</RegularButton>
@@ -112,16 +151,10 @@ const GameView: React.FC<AppProps> = ({ currentUser, contract }) => {
 					</GameCard>
 				</Flex>
 			)}
-
-			<PlayModal
-				play={play}
-				open={playModal}
-				handleClose={() => setPlayModal(false)}
-			/>
 			<ViewPlaysModal
 				open={viewPlayModal}
-				play1={play1}
-				play2={play2}
+				play1={"rock"}
+				play2={"paper"}
 				handleClose={() => setViewPlayModal(false)}
 				player1="melvinmanni09.testnet"
 				player2="bot"

@@ -1,12 +1,7 @@
 export interface Game {
 	id: string;
 	numOfPlayers: number;
-	players: {
-		id: string;
-		name: string;
-		choice: "ROCK" | "PAPER" | "SCISSOR";
-		txFee: number;
-	}[];
+	players: Player[];
 	stakers: {
 		id: string;
 		betOn: string;
@@ -20,6 +15,14 @@ export interface Game {
 		gameId: string;
 		accountId: string;
 	}[];
-  pool: number;
-  roomId?: string;
+	pool: number;
+	roomId?: string;
+}
+
+export interface Player {
+	id: string;
+	name: string;
+	choice: 0 | 1 | 2;
+	txFee: string;
+	timePlayed: string;
 }

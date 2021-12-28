@@ -68,6 +68,7 @@ const GamesList = (props: {
 				<GameCardGrid>
 					{props.games.map((game) => (
 						<GameCard
+							key={game.id}
 							createdAt={game.createdAt}
 							staked={totalStake(game)}
 							status={game.status}

@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import CreateGameBtn, { GameStatsCard } from "../components/CreateGameBtn";
+import { GameStatsCard } from "../components/CreateGameBtn";
 import Flex from "../components/Flex";
 // import GameCard from "../components/GameCard";
 import GameCardLegend from "../components/GameCard/Legend";
@@ -16,7 +16,6 @@ const Profile: React.FC<AppProps> = () => {
 	return (
 		<div>
 			<Flex justifyContent="space-between" alignItems="center">
-				<CreateGameBtn onClick={() => { }} />
 				<GameStatsCard win={3} draw={0} loss={1} />
 			</Flex>
 

@@ -1,20 +1,25 @@
-import React, { ReactElement } from "react";
+import React, { ReactElement, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { Game } from "../../interfaces/IGame.interface";
 import Flex from "../Flex";
 import Text from "../Text";
 import { parseDate } from "../../utils/helperFunctions";
+import { AppProps } from "../../interfaces/IApp.interface";
 
 interface Props {
 	staked: number;
 	id: string;
 	createdAt: string;
 	status: number;
-	winner?: string;
 	children?: React.ReactNode;
 	players: Game["players"];
 	disabled?: boolean;
+	choice?: string;
+	maxPlayersReached?: boolean;
+	player2TimePlayed?: string;
+	getWinner?: () => void;
+	contract?: AppProps["contract"];
 }
 
 export type gameProps = Props;
@@ -62,11 +67,65 @@ export default function GameCard({
 	status,
 	staked,
 	id,
-	winner,
 	children,
 	players,
 	disabled,
+	choice,
+	maxPlayersReached,
+	player2TimePlayed,
+	contract,
 }: Props): ReactElement {
+	const [counter, setCounter] = useState(0);
+	const [winner, setWinner] = useState("");
+
+	const getWinner = async () => {
+		if (status === 2) {
+			try {
+				const res = await contract?.getWinner({ _gameId: id });
+				setWinner(res);
+			} catch (error) {
+				console.log(error);
+			}
+		}
+	};
+
+	useEffect(() => {
+		getWinner();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [contract, status, id]);
+
+	const endGame = async () => {
+		if (status === 1 && counter < 1) {
+			try {
+				await contract?.payout({ _gameId: id });
+				getWinner();
+			} catch (error) {
+				console.log(error);
+			}
+		}
+	};
+
+	useEffect(() => {
+		let intervalId: any;
+		if (player2TimePlayed) {
+			const endTime = Math.round(Number(player2TimePlayed) / 1000000) + 60000;
+
+			if (new Date().getTime() < endTime) {
+				intervalId = setInterval(() => {
+					setCounter((endTime - new Date().getTime()) / 1000);
+				}, 1000);
+			} else {
+				clearInterval(intervalId);
+				setCounter(0);
+
+				endGame()
+			}
+		}
+
+		return () => clearInterval(intervalId);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [contract, counter, id, player2TimePlayed]);
+
 	return (
 		<Wrapper>
 			<Flex>
@@ -76,33 +135,57 @@ export default function GameCard({
 						Game ID: {id}
 					</CardText>
 
-					<CardText mb="2px" fontSize={14}>
-						Amount Staked: {staked} NEAR
-					</CardText>
+					<Flex flexDirection="row" justifyContent="space-between">
+						<div>
+							<CardText mb="2px" fontSize={14}>
+								Amount Staked: {staked} NEAR
+							</CardText>
 
-					<CardText mb="2px" fontSize={14}>
-						Created: {parseDate(createdAt)}
-					</CardText>
+							<CardText mb="2px" fontSize={14}>
+								Created: {parseDate(createdAt)}
+							</CardText>
 
-					{players?.length
-						? players.map((player, idx) => (
-								<CardText key={player.id} mb="2px" fontSize={14}>
-									Player`${idx + 1}`: {player?.name}
+							{players?.length
+								? players.map((player, idx) => (
+										<CardText key={player.id} mb="2px" fontSize={14}>
+											Player {idx + 1}: {player?.name}
+										</CardText>
+								  ))
+								: null}
+
+							{choice && (
+								<CardText mb="2px" fontSize={14}>
+									Choice: {choice}
 								</CardText>
-						  ))
-						: null}
+							)}
 
-					{winner && (
-						<CardText mb="2px" fontSize={14}>
-							Winner: {winner}
-						</CardText>
-					)}
+							{maxPlayersReached && (
+								<CardText style={{ color: "yellow" }} mb="2px" fontSize={14}>
+									Maximum number of players for this game has been reached.
+									Please play another game.
+								</CardText>
+							)}
+
+							{winner && (
+								<CardText mb="2px" fontSize={14}>
+									Winner: {winner}
+								</CardText>
+							)}
+						</div>
+						{player2TimePlayed && (
+							<CardText style={{ fontSize: "20px" }} mb="2px" fontSize={14}>
+								{counter > 0
+									? `Time Left: ${counter.toFixed(0)}`
+									: "Game concluded!"}
+							</CardText>
+						)}
+					</Flex>
 
 					{children && (
 						<div style={{ width: "100%", margin: "10px" }}>{children}</div>
 					)}
 
-					{!disabled && (
+					{(!disabled || children) && (
 						<Flex style={{ marginTop: 12 }} justifyContent="flex-end">
 							<ViewLink to={`/games/${id}`}>View details</ViewLink>
 						</Flex>
