@@ -48,13 +48,13 @@ const initContract = async () => {
 				"getGamePlayers",
 				"getGameStakers",
 				"getWinner",
-				"getGame"
+				"getGame",
 			],
 			changeMethods: [
 				"createRoom",
 				"joinPublicRoom",
 				"requestToJoinPrivateRoom",
-				"approveMember",
+				"responseToRequest",
 				"createGame",
 				"play",
 				"stake",

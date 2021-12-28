@@ -84,7 +84,31 @@ const GamesList = (props: {
 	);
 };
 
-const RequestList: React.FC<{ requests: RoomRequest[] }> = ({ requests }) => {
+const RequestList: React.FC<{
+	requests: RoomRequest[];
+	contract: AppProps["contract"];
+	refetch: () => void;
+}> = ({ requests, contract, refetch }) => {
+	const [responding, setResponding] = useState(false);
+
+	const respondToRequest = async (choice: boolean, accountId: string) => {
+		setResponding(true);
+
+		try {
+			await contract?.responseToRequest({
+				_roomId: requests[0]?.roomId,
+				acct: accountId,
+				acceptance: choice,
+			});
+
+			refetch();
+			setResponding(false);
+		} catch (error: any) {
+			console.log(error?.message);
+			setResponding(false);
+		}
+	};
+
 	return (
 		<>
 			{requests?.length ? (
@@ -94,10 +118,19 @@ const RequestList: React.FC<{ requests: RoomRequest[] }> = ({ requests }) => {
 							{val?.accountId} wants to join this room.
 						</Text>
 						<Flex justifyContent="center">
-							<RegularButton onClick={() => {}} mt="15px" mr="10px">
+							<RegularButton
+								onClick={() => respondToRequest(true, val?.accountId)}
+								disabled={responding}
+								mt="15px"
+								mr="10px"
+							>
 								Accept
 							</RegularButton>
-							<RegularButton onClick={() => {}} mt="15px">
+							<RegularButton
+								onClick={() => respondToRequest(false, val?.accountId)}
+								disabled={responding}
+								mt="15px"
+							>
 								Reject
 							</RegularButton>
 						</Flex>
@@ -125,6 +158,7 @@ const GameView: React.FC<AppProps> = ({ currentUser, contract }) => {
 	const [members, setMembers] = useState<Room["members"]>([]);
 	const [requests, setRequests] = useState<RoomRequest[]>([]);
 	const [checkingRequest, setCheckingRequest] = useState(true);
+	const [refetch, setRefetch] = useState(false);
 
 	const txFee = Big(0.5)
 		.times(10 ** 24)
@@ -202,7 +236,7 @@ const GameView: React.FC<AppProps> = ({ currentUser, contract }) => {
 		} else {
 			setCheckingRequest(false);
 		}
-	}, [contract, currentUser?.accountId, details?.isVisible, id]);
+	}, [contract, currentUser?.accountId, details?.isVisible, id, refetch]);
 
 	const isOwner = details?.owner === currentUser?.accountId;
 
@@ -366,7 +400,11 @@ const GameView: React.FC<AppProps> = ({ currentUser, contract }) => {
 									<GamesList games={games} disabled={requestPending} />
 								)}
 								{activeTab === "requests" && (
-									<RequestList requests={requests} />
+									<RequestList
+										requests={requests}
+										contract={contract}
+										refetch={() => setRefetch(!refetch)}
+									/>
 								)}
 							</Flex>
 						</CardWrapper>
