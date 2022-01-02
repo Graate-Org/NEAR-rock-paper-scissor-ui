@@ -3,7 +3,6 @@ import styled from "styled-components";
 import Text from "../components/Text";
 import RoomCard from "../components/RoomCard";
 import Spinner from "../icons/Spinner";
-// import GameCard from "../components/GameCard";
 import { AppProps } from "../interfaces/IApp.interface";
 import { Room } from "../interfaces/IRoom.interface";
 import { parseDate } from "../utils/helperFunctions";
