@@ -7,6 +7,7 @@ import Text from "../Text";
 import { parseDate } from "../../utils/helperFunctions";
 import { AppProps } from "../../interfaces/IApp.interface";
 import StakeModal from "../../modals/StakeModal";
+import ModalComponent from "../../modals";
 
 interface Props {
 	staked: number | string;
@@ -84,6 +85,7 @@ export default function GameCard({
 }: Props): ReactElement {
 	const [counter, setCounter] = useState(0);
 	const [winner, setWinner] = useState("");
+	const [payoutAlert, setPayoutAlert] = useState(false);
 
 	const getWinner = async () => {
 		if (status === 2) {
@@ -104,9 +106,11 @@ export default function GameCard({
 	const endGame = async () => {
 		if (status === 1 && counter < 1) {
 			try {
+				setPayoutAlert(true);
 				await contract?.payout({ _gameId: id });
 				getWinner();
 			} catch (error) {
+				setPayoutAlert(false);
 				console.log(error);
 			}
 		}
@@ -193,7 +197,7 @@ export default function GameCard({
 						<div style={{ width: "100%", margin: "10px" }}>{children}</div>
 					)}
 
-					{(!disabled && !noLink) && (
+					{!disabled && !noLink && (
 						<Flex style={{ marginTop: 12 }} justifyContent="flex-end">
 							<ViewLink to={`/games/${id}`}>View details</ViewLink>
 						</Flex>
@@ -201,15 +205,24 @@ export default function GameCard({
 				</div>
 			</Flex>
 
-			{showModal && handleClose && (
+			{handleClose && (
 				<StakeModal
-					open={showModal}
+					open={showModal as boolean}
 					handleClose={handleClose}
 					contract={contract}
 					players={players}
 					gameId={id}
 				/>
 			)}
+
+			<ModalComponent
+				open={payoutAlert}
+				handleClose={() => setPayoutAlert(false)}
+			>
+				<CardText mb="2px" fontSize={14}>
+					Initializing payout...
+				</CardText>
+			</ModalComponent>
 		</Wrapper>
 	);
 }
