@@ -21,3 +21,8 @@ export interface RoomRequest {
 	roomId: string;
 	state: 0 | 1 | 2;
 }
+
+export interface RoomMember {
+	accountId: string;
+	roomId: string;
+}
