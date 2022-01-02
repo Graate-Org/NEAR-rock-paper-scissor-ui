@@ -9,6 +9,7 @@ import { parseDate } from "../utils/helperFunctions";
 import Spacing from "../components/Spacing";
 import Flex from "../components/Flex";
 import { ProfileIcon } from "../icons";
+import { ViewLink } from "../components/GameCard";
 
 const CardGrid = styled.div`
 	display: grid;
@@ -56,11 +57,11 @@ const Profile: React.FC<AppProps> = ({ currentUser, contract }) => {
 				</Flex>
 			</Spacing>
 
-			<CardGrid>
-				{loading ? (
-					<Spinner />
-				) : rooms?.length ? (
-					rooms?.map((room) => (
+			{loading ? (
+				<Spinner />
+			) : rooms?.length ? (
+				<CardGrid>
+					{rooms?.map((room) => (
 						<RoomCard
 							key={room?.id}
 							id={room?.id}
@@ -69,11 +70,14 @@ const Profile: React.FC<AppProps> = ({ currentUser, contract }) => {
 							created={parseDate(room?.createdAt)}
 							contract={contract}
 						/>
-					))
-				) : (
-					<Text textAlign="center">No room yet! Create one</Text>
-				)}
-			</CardGrid>
+					))}
+				</CardGrid>
+			) : (
+				<Text textAlign="center">
+					You've not joined any room yet. Click{" "}
+					<ViewLink to="/rooms">here</ViewLink> to check rooms
+				</Text>
+			)}
 		</div>
 	);
 };
