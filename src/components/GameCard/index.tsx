@@ -6,9 +6,10 @@ import Flex from "../Flex";
 import Text from "../Text";
 import { parseDate } from "../../utils/helperFunctions";
 import { AppProps } from "../../interfaces/IApp.interface";
+import StakeModal from "../../modals/StakeModal";
 
 interface Props {
-	staked: number;
+	staked: number | string;
 	id: string;
 	createdAt: string;
 	status: number;
@@ -20,6 +21,9 @@ interface Props {
 	player2TimePlayed?: string;
 	getWinner?: () => void;
 	contract?: AppProps["contract"];
+	showModal?: boolean;
+	noLink?: boolean;
+	handleClose?: () => void;
 }
 
 export type gameProps = Props;
@@ -51,7 +55,7 @@ const CardText = styled(Text)`
 	color: #b1b9d8;
 `;
 
-const ViewLink = styled(Link)`
+export const ViewLink = styled(Link)`
 	font-family: "Poppins";
 	font-style: normal;
 	font-weight: 500;
@@ -74,6 +78,9 @@ export default function GameCard({
 	maxPlayersReached,
 	player2TimePlayed,
 	contract,
+	showModal,
+	handleClose,
+	noLink,
 }: Props): ReactElement {
 	const [counter, setCounter] = useState(0);
 	const [winner, setWinner] = useState("");
@@ -104,11 +111,12 @@ export default function GameCard({
 			}
 		}
 	};
-	
+
 	useEffect(() => {
 		let intervalId: any;
 		if (player2TimePlayed) {
-			const endTime = Math.round(Number(player2TimePlayed) / 1000000) + 60000;
+			// TODO: change to 120000
+			const endTime = Math.round(Number(player2TimePlayed) / 1000000) + 90000;
 
 			if (new Date().getTime() < endTime) {
 				intervalId = setInterval(() => {
@@ -118,7 +126,7 @@ export default function GameCard({
 				clearInterval(intervalId);
 				setCounter(0);
 
-				endGame()
+				endGame();
 			}
 		}
 
@@ -185,13 +193,23 @@ export default function GameCard({
 						<div style={{ width: "100%", margin: "10px" }}>{children}</div>
 					)}
 
-					{(!disabled || children) && (
+					{(!disabled && !noLink) && (
 						<Flex style={{ marginTop: 12 }} justifyContent="flex-end">
 							<ViewLink to={`/games/${id}`}>View details</ViewLink>
 						</Flex>
 					)}
 				</div>
 			</Flex>
+
+			{showModal && handleClose && (
+				<StakeModal
+					open={showModal}
+					handleClose={handleClose}
+					contract={contract}
+					players={players}
+					gameId={id}
+				/>
+			)}
 		</Wrapper>
 	);
 }

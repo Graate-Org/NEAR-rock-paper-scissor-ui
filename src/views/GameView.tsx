@@ -9,7 +9,6 @@ import Spacing from "../components/Spacing";
 import Spinner from "../icons/Spinner";
 import { AppProps } from "../interfaces/IApp.interface";
 import { Game, Player } from "../interfaces/IGame.interface";
-import ViewPlaysModal from "../modals/ViewPlaysModal";
 
 const GameView: React.FC<AppProps> = ({ currentUser, contract }) => {
 	const { id } = useParams<{ id: string }>();
@@ -26,11 +25,11 @@ const GameView: React.FC<AppProps> = ({ currentUser, contract }) => {
 		winners: [],
 		pool: 0,
 	});
-	const [viewPlayModal, setViewPlayModal] = useState<boolean>(false);
 	const [players, setPlayers] = useState<Player[]>([]);
 	const isAPlayer = players.find(
 		(player) => player.name === currentUser?.accountId
 	);
+	const [showStakeModal, setShowStakeModal] = useState(false);
 
 	useEffect(() => {
 		if (id) {
@@ -55,14 +54,13 @@ const GameView: React.FC<AppProps> = ({ currentUser, contract }) => {
 		}
 	}, [contract, history, id]);
 
-	const totalStake = () => {
-		if (details?.stakers?.length) {
-			const stakes = details?.stakers.map((staker) => staker.stake);
-			return stakes.reduce((prev, cur) => prev + cur, 0);
+	const totalStake = useMemo(() => {
+		if (details?.pool) {
+			return (Number(details?.pool) / 10 ** 24).toFixed();
 		}
 
 		return 0;
-	};
+	}, [details?.pool]);
 
 	const handlePlay = async () => {
 		const txFee = Big(0.2)
@@ -80,7 +78,19 @@ const GameView: React.FC<AppProps> = ({ currentUser, contract }) => {
 		}
 	};
 
+	const player2TimePlayed = useMemo(() => {
+		if (players?.length === details?.numOfPlayers) {
+			return players[details?.numOfPlayers - 1]?.timePlayed;
+		}
+
+		return undefined;
+	}, [details?.numOfPlayers, players]);
+
 	const disablePlay = useMemo(() => {
+		if (details?.status === 2) {
+			return true;
+		}
+
 		if (isAPlayer) {
 			return true;
 		}
@@ -90,7 +100,7 @@ const GameView: React.FC<AppProps> = ({ currentUser, contract }) => {
 		}
 
 		return false;
-	}, [isAPlayer, players?.length, details?.numOfPlayers]);
+	}, [details?.status, details?.numOfPlayers, isAPlayer, players?.length]);
 
 	const choice = useMemo(() => {
 		if (isAPlayer) {
@@ -103,14 +113,6 @@ const GameView: React.FC<AppProps> = ({ currentUser, contract }) => {
 
 		return undefined;
 	}, [isAPlayer]);
-
-	const player2TimePlayed = useMemo(() => {
-		if (players?.length === details?.numOfPlayers) {
-			return players[details?.numOfPlayers - 1]?.timePlayed;
-		}
-
-		return undefined;
-	}, [details?.numOfPlayers, players]);
 
 	return (
 		<>
@@ -126,7 +128,7 @@ const GameView: React.FC<AppProps> = ({ currentUser, contract }) => {
 					<GameCard
 						id={details?.id}
 						status={details?.status}
-						staked={totalStake()}
+						staked={totalStake}
 						createdAt={details?.createdAt}
 						players={players.length ? players : []}
 						choice={choice}
@@ -135,10 +137,19 @@ const GameView: React.FC<AppProps> = ({ currentUser, contract }) => {
 						}
 						player2TimePlayed={player2TimePlayed}
 						contract={contract}
+						showModal={showStakeModal}
+						handleClose={() => setShowStakeModal(false)}
+						noLink
 					>
 						<Spacing marginTop="39px" marginBottom="15px">
 							<Flex justifyContent="space-between" flex={0.3}>
-								<RegularButton onClick={() => {}}>Stake</RegularButton>
+								<RegularButton
+									aria-disabled={disablePlay}
+									disabled={disablePlay || players?.length ? false : true}
+									onClick={() => setShowStakeModal(true)}
+								>
+									Stake
+								</RegularButton>
 								<RegularButton
 									aria-disabled={disablePlay}
 									disabled={disablePlay}
@@ -151,14 +162,6 @@ const GameView: React.FC<AppProps> = ({ currentUser, contract }) => {
 					</GameCard>
 				</Flex>
 			)}
-			<ViewPlaysModal
-				open={viewPlayModal}
-				play1={"rock"}
-				play2={"paper"}
-				handleClose={() => setViewPlayModal(false)}
-				player1="melvinmanni09.testnet"
-				player2="bot"
-			/>
 		</>
 	);
 };
