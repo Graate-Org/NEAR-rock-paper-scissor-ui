@@ -42,7 +42,7 @@ const Rooms: React.FC<AppProps> = ({ contract, currentUser }) => {
 				});
 
 				setRooms(res);
-				setNonMemberRooms(res2)
+				setNonMemberRooms(res2);
 
 				setLoading(false);
 			} catch (error) {
@@ -89,8 +89,8 @@ const Rooms: React.FC<AppProps> = ({ contract, currentUser }) => {
 								id={room?.id}
 								privacy={room?.isVisible === 0 ? "public" : "private"}
 								route={`/rooms/${room?.id}`}
-								membersCount={room?.members?.length || 0}
 								created={parseDate(room?.createdAt)}
+								contract={contract}
 							/>
 						))
 					) : (
@@ -108,12 +108,12 @@ const Rooms: React.FC<AppProps> = ({ contract, currentUser }) => {
 								id={room?.id}
 								privacy={room?.isVisible === 0 ? "public" : "private"}
 								route={`/rooms/${room?.id}`}
-								membersCount={room?.members?.length || 0}
 								created={parseDate(room?.createdAt)}
+								contract={contract}
 							/>
 						))
 					) : (
-						<Text textAlign="center">No room yet! Create one</Text>
+						<Text textAlign="center">No room!@</Text>
 					)}
 				</CardGrid>
 			)}

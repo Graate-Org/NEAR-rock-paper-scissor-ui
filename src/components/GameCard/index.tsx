@@ -104,7 +104,7 @@ export default function GameCard({
 			}
 		}
 	};
-
+	
 	useEffect(() => {
 		let intervalId: any;
 		if (player2TimePlayed) {
