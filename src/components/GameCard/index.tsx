@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useState } from "react";
+import React, { ReactElement, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { Game } from "../../interfaces/IGame.interface";
@@ -8,6 +8,7 @@ import { parseDate } from "../../utils/helperFunctions";
 import { AppProps } from "../../interfaces/IApp.interface";
 import StakeModal from "../../modals/StakeModal";
 import ModalComponent from "../../modals";
+import { HandPaperIcon, HandRockIcon, HandScissorsIcon } from "../../icons";
 
 interface Props {
 	staked: number | string;
@@ -17,7 +18,7 @@ interface Props {
 	children?: React.ReactNode;
 	players: Game["players"];
 	disabled?: boolean;
-	choice?: string;
+	choice?: "ROCK" | "PAPER" | "SCISSORS";
 	maxPlayersReached?: boolean;
 	player2TimePlayed?: string;
 	getWinner?: () => void;
@@ -25,6 +26,7 @@ interface Props {
 	showModal?: boolean;
 	noLink?: boolean;
 	handleClose?: () => void;
+	currentUser?: AppProps["currentUser"];
 }
 
 export type gameProps = Props;
@@ -82,10 +84,19 @@ export default function GameCard({
 	showModal,
 	handleClose,
 	noLink,
+	currentUser,
 }: Props): ReactElement {
 	const [counter, setCounter] = useState(0);
 	const [winner, setWinner] = useState("");
 	const [payoutAlert, setPayoutAlert] = useState(false);
+
+	const isAPlayer = useMemo(() => {
+		if (players?.length) {
+			return players?.find((player) => player.name === currentUser?.accountId);
+		}
+
+		return false;
+	}, [currentUser, players]);
 
 	const getWinner = async () => {
 		if (status === 2) {
@@ -104,7 +115,7 @@ export default function GameCard({
 	}, [contract, status, id]);
 
 	const endGame = async () => {
-		if (status === 1 && counter < 1) {
+		if (status === 1 && counter < 1 && isAPlayer) {
 			try {
 				setPayoutAlert(true);
 				await contract?.payout({ _gameId: id });
@@ -138,6 +149,19 @@ export default function GameCard({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [contract, counter, id, player2TimePlayed]);
 
+	const getChoiceIcon = (choice: "ROCK" | "PAPER" | "SCISSORS") => {
+		switch (choice) {
+			case "ROCK":
+				return <HandRockIcon />;
+			case "PAPER":
+				return <HandPaperIcon />;
+			case "SCISSORS":
+				return <HandScissorsIcon />;
+			default:
+				return "";
+		}
+	};
+
 	return (
 		<Wrapper>
 			<Flex>
@@ -166,9 +190,12 @@ export default function GameCard({
 								: null}
 
 							{choice && (
-								<CardText mb="2px" fontSize={14}>
-									Choice: {choice}
-								</CardText>
+								<Flex justifyContent="start">
+									<CardText mb="2px" fontSize={14}>
+										Choice: {choice}
+									</CardText>
+									<CardText ml="10px">{getChoiceIcon(choice)}</CardText>
+								</Flex>
 							)}
 
 							{maxPlayersReached && (
