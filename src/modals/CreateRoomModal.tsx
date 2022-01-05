@@ -35,7 +35,7 @@ const CreateRoomModal: React.FC<Props> = ({ handleClose, open, contract }) => {
 		.times(10 ** 24)
 		.toFixed();
 
-	const GAS = Big(3)
+	const GAS = Big(20)
 		.times(10 ** 13)
 		.toFixed();
 
