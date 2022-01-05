@@ -145,7 +145,11 @@ const GameView: React.FC<AppProps> = ({ currentUser, contract }) => {
 							<Flex justifyContent="space-between" flex={0.3}>
 								<RegularButton
 									aria-disabled={disablePlay}
-									disabled={disablePlay || players?.length ? false : true}
+									disabled={
+										disablePlay || !players?.length || details?.status === 2
+											? true
+											: false
+									}
 									onClick={() => setShowStakeModal(true)}
 								>
 									Stake
