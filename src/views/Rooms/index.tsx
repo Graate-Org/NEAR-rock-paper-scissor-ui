@@ -113,7 +113,7 @@ const Rooms: React.FC<AppProps> = ({ contract, currentUser }) => {
 							/>
 						))
 					) : (
-						<Text textAlign="center">No room!@</Text>
+						<Text textAlign="center">No room yet! Create one</Text>
 					)}
 				</CardGrid>
 			)}
