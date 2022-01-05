@@ -54,9 +54,8 @@ const GamesList = (props: {
 	disabled: boolean;
 }): ReactElement => {
 	const totalStake = (game: Game) => {
-		if (game?.stakers?.length) {
-			const stakes = game?.stakers.map((staker) => staker.stake);
-			return stakes.reduce((prev, cur) => prev + cur, 0);
+		if (game?.pool) {
+			return (Number(game?.pool) / 10 ** 24).toFixed();
 		}
 
 		return 0;
@@ -351,7 +350,11 @@ const GameView: React.FC<AppProps> = ({ currentUser, contract }) => {
 									<Spinner />
 								) : (
 									<RegularButton onClick={clickHandler} mt="15px">
-										{isOwner || isMember ? "CREATE GAME" : "JOIN ROOM"}
+										{isOwner || isMember
+											? "CREATE GAME"
+											: details?.isVisible === 0
+											? "JOIN ROOM"
+											: "SEND REQUEST TO JOIN"}
 									</RegularButton>
 								)}
 							</Flex>
@@ -373,14 +376,15 @@ const GameView: React.FC<AppProps> = ({ currentUser, contract }) => {
 								>
 									Members
 								</TabBtn>
-								{currentUser?.accountId === details?.owner && (
-									<TabBtn
-										onClick={() => setActiveTab("requests")}
-										activeTab={activeTab === "requests"}
-									>
-										Requests
-									</TabBtn>
-								)}
+								{currentUser?.accountId === details?.owner &&
+									details?.isVisible === 1 && (
+										<TabBtn
+											onClick={() => setActiveTab("requests")}
+											activeTab={activeTab === "requests"}
+										>
+											Requests
+										</TabBtn>
+									)}
 							</RoomTab>
 						</Flex>
 					</Spacing>
